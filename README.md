@@ -1,6 +1,8 @@
 # QuickJS Android
 
 [QuickJS](https://bellard.org/quickjs/) Android wrapper.
+[QuickJS_Seven332](https://github.com/seven332/quickjs) Source code.
+[QuickJS_Github](https://github.com/bellard/quickjs) Source code.
 
 ## Build
 
