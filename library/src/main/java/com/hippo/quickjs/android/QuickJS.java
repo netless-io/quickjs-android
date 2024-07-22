@@ -160,6 +160,8 @@ public class QuickJS {
   static native boolean defineValueProperty(long context, long value, int index, long property, int flags);
   static native boolean defineValueProperty(long context, long value, String name, long property, int flags);
   static native long invokeValueFunction(long context, long function, long thisObj, long[] args);
+  static native long callConstructor(long context, long function, long[] args);
+  static native long invokeMethod(long context, long value, String methodName, long[] values);
   static native void destroyValue(long context, long value);
 
   static native JSException getException(long context);

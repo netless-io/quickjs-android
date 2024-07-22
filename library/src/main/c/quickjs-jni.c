@@ -719,6 +719,81 @@ Java_com_hippo_quickjs_android_QuickJS_invokeValueFunction(
 }
 
 JNIEXPORT jlong JNICALL
+Java_com_hippo_quickjs_android_QuickJS_callConstructor(
+    JNIEnv *env,
+    jclass __unused clazz,
+    jlong context,
+    jlong function,
+    jlongArray args
+) {
+    JSContext *ctx = (JSContext *) context;
+    CHECK_NULL_RET(env, ctx, MSG_NULL_JS_CONTEXT);
+    JSValue *func_obj = (JSValue *) function;
+    CHECK_NULL_RET(env, func_obj, "Null function");
+    CHECK_NULL_RET(env, args, "Null arguments");
+    jlong *elements = (*env)->GetLongArrayElements(env, args, NULL);
+    CHECK_NULL_RET(env, elements, MSG_OOM);
+
+    int argc = (*env)->GetArrayLength(env, args);
+    JSValueConst argv[argc];
+    for (int i = 0; i < argc; i++) {
+        argv[i] = *((JSValue *) elements[i]);
+    }
+
+    JSValue *result = NULL;
+
+    JSValue ret = JS_CallConstructor(ctx, *func_obj, argc, argv);
+
+    COPY_JS_VALUE(ctx, ret, result);
+
+    (*env)->ReleaseLongArrayElements(env, args, elements, JNI_ABORT);
+
+    CHECK_NULL_RET(env, result, MSG_OOM);
+
+    return (jlong) result;
+}
+
+JNIEXPORT jlong JNICALL
+Java_com_hippo_quickjs_android_QuickJS_invokeMethod(
+    JNIEnv *env,
+    jclass __unused clazz,
+    jlong context,
+    jlong thisObj,
+    jstring function,
+    jlongArray args
+) {
+    JSContext *ctx = (JSContext *) context;
+    CHECK_NULL_RET(env, ctx, MSG_NULL_JS_CONTEXT);
+    JSValue *this_obj = (JSValue *) thisObj;
+    CHECK_NULL_RET(env, args, "Null arguments");
+    jlong *elements = (*env)->GetLongArrayElements(env, args, NULL);
+    CHECK_NULL_RET(env, elements, MSG_OOM);
+
+    int argc = (*env)->GetArrayLength(env, args);
+    JSValueConst argv[argc];
+    for (int i = 0; i < argc; i++) {
+        argv[i] = *((JSValue *) elements[i]);
+    }
+
+    const char *function_utf = (*env)->GetStringUTFChars(env, function, NULL);
+    CHECK_NULL_RET(env, function_utf, MSG_OOM);
+
+    JSValue func_obj = JS_GetPropertyStr(ctx, *this_obj, function_utf);
+    JSValue ret = JS_Call(ctx, func_obj, *this_obj, argc, argv);
+
+    JSValue *result = NULL;
+    COPY_JS_VALUE(ctx, ret, result);
+
+    JS_FreeValue(ctx, func_obj);
+    (*env)->ReleaseLongArrayElements(env, args, elements, JNI_ABORT);
+    (*env)->ReleaseStringUTFChars(env, function, function_utf);
+
+    CHECK_NULL_RET(env, result, MSG_OOM);
+
+    return (jlong) result;
+}
+
+JNIEXPORT jlong JNICALL
 Java_com_hippo_quickjs_android_QuickJS_getValueProperty__JJI(
     JNIEnv *env,
     jclass __unused clazz,

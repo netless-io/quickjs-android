@@ -632,6 +632,49 @@ public class JSContext implements Closeable {
     }
   }
 
+  /**
+   * Calls a JavaScript function.
+   */
+  public JSValue callFunction(JSValue function, JSValue thisObj, JSValue[] args) {
+    long[] valueArgs = new long[args.length];
+    for (int i = 0; i < args.length; i++) {
+      valueArgs[i] = args[i].pointer;
+    }
+    synchronized (jsRuntime) {
+      checkClosed();
+      long val = QuickJS.invokeValueFunction(pointer, function.pointer, thisObj.pointer, valueArgs);
+      return wrapAsJSValue(val);
+    }
+  }
+
+  /**
+   * Calls a JavaScript function as a constructor.
+   */
+  public JSValue callConstructor(JSValue function, JSValue[] args) {
+    long[] valueArgs = new long[args.length];
+    for (int i = 0; i < args.length; i++) {
+      valueArgs[i] = args[i].pointer;
+    }
+    synchronized (jsRuntime) {
+      checkClosed();
+      long val = QuickJS.callConstructor(pointer, function.pointer, valueArgs);
+      return wrapAsJSValue(val);
+    }
+  }
+
+  // Calls a function by name
+  public JSValue invokeMethod(JSObject thisObj, String methodName, JSValue[] args) {
+    long[] valueArgs = new long[args.length];
+    for (int i = 0; i < args.length; i++) {
+      valueArgs[i] = args[i].pointer;
+    }
+    synchronized (jsRuntime) {
+      checkClosed();
+      long val = QuickJS.invokeMethod(pointer, thisObj.pointer, methodName, valueArgs);
+      return wrapAsJSValue(val);
+    }
+  }
+
   @Override
   public void close() {
     synchronized (jsRuntime) {

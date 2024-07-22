@@ -24,8 +24,8 @@ package com.hippo.quickjs.android;
  */
 public abstract class JSValue {
 
-  final long pointer;
-  final JSContext jsContext;
+  public final long pointer;
+  public final JSContext jsContext;
 
   JSValue(long pointer, JSContext jsContext) {
     this.pointer = pointer;
