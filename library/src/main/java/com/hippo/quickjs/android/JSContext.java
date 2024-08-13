@@ -675,6 +675,13 @@ public class JSContext implements Closeable {
     }
   }
 
+  public Boolean isTheSameValue(JSValue value1, JSValue value2) {
+    synchronized (jsRuntime) {
+      checkClosed();
+      return QuickJS.isTheSameValue(pointer, value1.pointer, value2.pointer);
+    }
+  }
+
   @Override
   public void close() {
     synchronized (jsRuntime) {

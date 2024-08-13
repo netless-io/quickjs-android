@@ -722,6 +722,8 @@ int JS_IsArray(JSContext *ctx, JSValueConst val);
 
 int JS_IsArrayBuffer(JSContext *ctx, JSValueConst val);
 
+JS_BOOL JS_StrictEqual(JSContext *ctx, JSValueConst v1, JSValueConst v2);
+
 JSValue JS_GetPropertyInternal(JSContext *ctx, JSValueConst obj,
                                JSAtom prop, JSValueConst receiver,
                                JS_BOOL throw_ref_error);

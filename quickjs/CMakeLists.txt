@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.4.1)
 
 project(quickjs C)
 
+option(ANDROID_LOG "Add Android Log" FALSE)
+
 option(LEAK_TRIGGER "Add a leak trigger" FALSE)
 
 file(STRINGS "quickjs/VERSION" CONFIG_VERSION)
@@ -62,3 +64,13 @@ set_target_properties(run-test262 PROPERTIES OUTPUT_NAME librun-test262.so)
 add_library(quickjs STATIC ${QUICKJS_LIB_SOURCES})
 target_compile_options(quickjs PRIVATE ${COMMON_FLAGS})
 target_include_directories(quickjs PUBLIC quickjs .)
+
+if (ANDROID_LOG)
+    set(COMMON_FLAGS ${COMMON_FLAGS} -DANDROID_LOG)
+
+    find_library(log-lib log)
+    target_link_libraries(qjs ${log-lib})
+    target_link_libraries(qjsc ${log-lib})
+    target_link_libraries(run-test262 ${log-lib})
+    target_link_libraries(quickjs ${log-lib})
+endif (ANDROID_LOG)

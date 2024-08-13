@@ -18,8 +18,10 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 31
+    namespace 'com.hippo.quickjs.android'
 
     defaultConfig {
+
         minSdkVersion 18
         targetSdkVersion 31
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'

@@ -78,6 +78,12 @@
 #define CONFIG_STACK_CHECK
 #endif
 
+#if defined(ANDROID_LOG)
+#include <android/log.h>
+#define printf(...) __android_log_print(ANDROID_LOG_DEBUG, "__quickjs__", __VA_ARGS__);
+#define DUMP_LEAKS  1
+#endif
+
 
 /* dump object free */
 //#define DUMP_FREE
@@ -5677,8 +5683,13 @@ static void mark_children(JSRuntime *rt, JSGCObjectHeader *gp,
 
 static void gc_decref_child(JSRuntime *rt, JSGCObjectHeader *p)
 {
-    assert(p->ref_count > 0);
-    p->ref_count--;
+    // assert(p->ref_count > 0);
+    if (p->ref_count > 0) {
+        p->ref_count--;
+    } else {
+        printf("[shape] ref count error, todo next time");
+        JS_DumpGCObject(rt, p);
+    }
     if (p->ref_count == 0 && p->mark == 1) {
         list_del(&p->link);
         list_add_tail(&p->link, &rt->tmp_obj_list);
@@ -11987,6 +11998,10 @@ int JS_IsArrayBuffer(JSContext *ctx, JSValueConst val) {
 
     JSObject *p = JS_VALUE_GET_OBJ(val);
     return p->class_id == JS_CLASS_ARRAY_BUFFER || p->class_id == JS_CLASS_SHARED_ARRAY_BUFFER;
+}
+
+BOOL JS_StrictEqual(JSContext *ctx, JSValueConst v1, JSValueConst v2) {
+    return js_strict_eq(ctx, v1, v2);
 }
 
 static double js_pow(double a, double b)

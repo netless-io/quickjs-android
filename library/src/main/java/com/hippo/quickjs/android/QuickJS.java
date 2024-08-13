@@ -169,4 +169,6 @@ public class QuickJS {
 
   static native long evaluate(long context, String sourceCode, String fileName, int flags);
   static native int executePendingJob(long context);
+
+  static native boolean isTheSameValue(long context, long value1, long value2);
 }

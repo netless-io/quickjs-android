@@ -1250,3 +1250,15 @@ JNI_OnLoad(JavaVM *vm, void __unused * reserved) {
 
     return JNI_VERSION_1_6;
 }
+
+JNIEXPORT jboolean JNICALL
+Java_com_hippo_quickjs_android_QuickJS_isTheSameValue(JNIEnv *env, jclass clazz, jlong context, jlong value1,
+                                                      jlong value2) {
+    JSContext *ctx = (JSContext *) context;
+    CHECK_NULL_RET(env, ctx, MSG_NULL_JS_CONTEXT);
+
+    JSValue *val1 = (JSValue *) value1;
+    JSValue *val2 = (JSValue *) value2;
+
+    return JS_StrictEqual(ctx, *val1, *val2);
+}
