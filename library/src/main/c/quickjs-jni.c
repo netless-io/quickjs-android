@@ -1175,6 +1175,32 @@ Java_com_hippo_quickjs_android_QuickJS_getGlobalObject(
     return (jlong) result;
 }
 
+JNIEXPORT jboolean JNICALL
+Java_com_hippo_quickjs_android_QuickJS_checkSameValue(
+    JNIEnv *env,
+    jclass clazz,
+    jlong context,
+    jlong value1,
+    jlong value2
+) {
+    JSContext *ctx = (JSContext *) context;
+    CHECK_NULL_RET(env, ctx, MSG_NULL_JS_CONTEXT);
+
+    JSValue *val1 = (JSValue *) value1;
+    JSValue *val2 = (JSValue *) value2;
+
+    return JS_VALUE_GET_PTR(*val1) == JS_VALUE_GET_PTR(*val2);
+}
+
+JNIEXPORT jlong JNICALL
+Java_com_hippo_quickjs_android_QuickJS_getJSValueAddress(JNIEnv *env, jclass clazz, jlong context, jlong value) {
+    JSContext *ctx = (JSContext *) context;
+    CHECK_NULL_RET(env, ctx, MSG_NULL_JS_CONTEXT);
+
+    JSValue *val = (JSValue *) value;
+    return (jlong) JS_VALUE_GET_PTR(*val);
+}
+
 JNIEXPORT jlong JNICALL
 Java_com_hippo_quickjs_android_QuickJS_evaluate(
     JNIEnv *env,
@@ -1249,16 +1275,4 @@ JNI_OnLoad(JavaVM *vm, void __unused * reserved) {
     }
 
     return JNI_VERSION_1_6;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_com_hippo_quickjs_android_QuickJS_isTheSameValue(JNIEnv *env, jclass clazz, jlong context, jlong value1,
-                                                      jlong value2) {
-    JSContext *ctx = (JSContext *) context;
-    CHECK_NULL_RET(env, ctx, MSG_NULL_JS_CONTEXT);
-
-    JSValue *val1 = (JSValue *) value1;
-    JSValue *val2 = (JSValue *) value2;
-
-    return JS_StrictEqual(ctx, *val1, *val2);
 }
